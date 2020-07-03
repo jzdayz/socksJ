@@ -15,19 +15,13 @@
  */
 package io.github.jzdayz.client;
 
-import io.github.jzdayz.netty.DecodeHandler;
-import io.github.jzdayz.netty.EncodeHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 
 public final class ClientInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         ch.pipeline().addLast(
-                new DecodeHandler(),
-                EncodeHandler.INSTANCE,
                 new ConnectionHandler()
         );
     }

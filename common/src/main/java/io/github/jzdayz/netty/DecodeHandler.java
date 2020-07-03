@@ -28,9 +28,9 @@ public class DecodeHandler extends LengthFieldBasedFrameDecoder {
         return null;
       }
       int length = frame.readInt();
-      log.info("接受字节数：{}",length);
-      ByteBuf data = frame.readSlice(length);
-      return ctx.alloc().buffer().writeBytes(data/*AESUtil.decrypt(data, PWD)*/);
+      log.info("解码数据："+length);
+      ByteBuf data = frame.readBytes(length);
+      return ctx.alloc().buffer().writeBytes(AESUtil.decrypt(ByteBufUtil.getBytes(data), PWD));
     } catch (Exception e) {
       log.error(e.getMessage(),e);
       ctx.channel().close().addListener((ChannelFutureListener) future -> System.out.println("closeChannel"));

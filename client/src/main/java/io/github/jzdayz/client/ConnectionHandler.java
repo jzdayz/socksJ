@@ -1,11 +1,9 @@
 package io.github.jzdayz.client;
 
-import io.github.jzdayz.netty.DecodeHandler;
-import io.github.jzdayz.netty.DirectClientHandler;
-import io.github.jzdayz.netty.EncodeHandler;
-import io.github.jzdayz.netty.RelayHandler;
+import io.github.jzdayz.netty.*;
 import io.github.jzdayz.utils.Utils;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.FutureListener;
@@ -41,8 +39,8 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
                 outboundChannel.pipeline().addLast(new DecodeHandler());
                 outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
 
-                ctx.pipeline().addLast(new RelayHandler(outboundChannel));
-                outboundChannel.writeAndFlush(msg);
+                ctx.pipeline().addLast(new RelayHandlerEncoder(outboundChannel));
+                outboundChannel.writeAndFlush(Utils.encryptBuf((ByteBuf) msg));
             } else {
                 Utils.closeOnFlush(ctx.channel());
             }

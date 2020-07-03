@@ -20,17 +20,15 @@ import io.github.jzdayz.netty.EncodeHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.socksx.SocksPortUnificationServerHandler;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 
-public final class SocksServerInitializer extends ChannelInitializer<SocketChannel> {
+public final class ServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         ch.pipeline().addLast(
                 EncodeHandler.INSTANCE,
                 new DecodeHandler(),
                 new SocksPortUnificationServerHandler(),
-                SocksServerHandler.INSTANCE
+                ServerHandler.INSTANCE
 
         );
     }

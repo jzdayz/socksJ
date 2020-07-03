@@ -19,10 +19,8 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 
-public final class SocksServer {
+public final class Server {
 
     static final int PORT = Integer.parseInt(System.getProperty("port", "2080"));
 
@@ -33,7 +31,7 @@ public final class SocksServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
-             .childHandler(new SocksServerInitializer());
+             .childHandler(new ServerInitializer());
             b.bind(PORT).sync().channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();

@@ -33,7 +33,7 @@ import io.netty.util.concurrent.FutureListener;
 import io.netty.util.concurrent.Promise;
 
 @ChannelHandler.Sharable
-public final class SocksServerConnectHandler extends SimpleChannelInboundHandler<SocksMessage> {
+public final class ServerConnectHandler extends SimpleChannelInboundHandler<SocksMessage> {
 
     private final Bootstrap b = new Bootstrap();
 
@@ -54,7 +54,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
                                 responseFuture.addListener(new ChannelFutureListener() {
                                     @Override
                                     public void operationComplete(ChannelFuture channelFuture) {
-                                        ctx.pipeline().remove(SocksServerConnectHandler.this);
+                                        ctx.pipeline().remove(ServerConnectHandler.this);
                                         outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
                                         ctx.pipeline().addLast(new RelayHandler(outboundChannel));
                                     }
@@ -107,7 +107,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
                                 responseFuture.addListener(new ChannelFutureListener() {
                                     @Override
                                     public void operationComplete(ChannelFuture channelFuture) {
-                                        ctx.pipeline().remove(SocksServerConnectHandler.this);
+                                        ctx.pipeline().remove(ServerConnectHandler.this);
                                         outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
                                         ctx.pipeline().addLast(new RelayHandler(outboundChannel));
                                     }

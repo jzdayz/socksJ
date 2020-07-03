@@ -50,11 +50,9 @@ public final class Utils {
     }
 
     public static ByteBuf encryptBuf(ByteBuf ms) throws Exception{
-        int length = ms.readableBytes();
-        byte[] bytes = Utils.toBytes(length);
         byte[] data = ByteBufUtil.getBytes(ms);
-        System.out.println("加密的数据量："+data.length);
-        byte[] array = data; //AESUtil.encrypt(data, AESArg.PWD);
+        byte[] array = AESUtil.encrypt(data, AESArg.PWD);
+        byte[] bytes = Utils.toBytes(array.length);
         byte[] container = new byte[bytes.length + array.length];
         System.arraycopy(bytes,0,container,0,bytes.length);
         System.arraycopy(array,0,container,bytes.length,array.length);

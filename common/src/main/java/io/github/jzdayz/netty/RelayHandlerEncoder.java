@@ -16,17 +16,18 @@
 package io.github.jzdayz.netty;
 
 import io.github.jzdayz.utils.Utils;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 
-public final class RelayHandler extends ChannelInboundHandlerAdapter {
+public final class RelayHandlerEncoder extends ChannelInboundHandlerAdapter {
 
     private final Channel relayChannel;
 
-    public RelayHandler(Channel relayChannel) {
+    public RelayHandlerEncoder(Channel relayChannel) {
         this.relayChannel = relayChannel;
     }
 
@@ -36,9 +37,9 @@ public final class RelayHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception{
         if (relayChannel.isActive()) {
-            relayChannel.writeAndFlush(msg);
+            relayChannel.writeAndFlush(Utils.encryptBuf((ByteBuf) msg));
         } else {
             ReferenceCountUtil.release(msg);
         }

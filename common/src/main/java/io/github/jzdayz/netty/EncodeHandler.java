@@ -4,6 +4,7 @@ import io.github.jzdayz.utils.AESArg;
 import io.github.jzdayz.utils.AESUtil;
 import io.github.jzdayz.utils.Utils;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
@@ -19,14 +20,13 @@ public class EncodeHandler extends ChannelOutboundHandlerAdapter {
     public static final EncodeHandler INSTANCE = new EncodeHandler();
 
 
-
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         if (msg instanceof ByteBuf) {
-            msg = Utils.encryptBuf((ByteBuf) msg);
-            ctx.writeAndFlush(msg);
+            ByteBuf newMsg = Utils.encryptBuf((ByteBuf) msg);
+            ctx.writeAndFlush(newMsg);
+            return;
         }
-        throw new RuntimeException();
     }
 
 
