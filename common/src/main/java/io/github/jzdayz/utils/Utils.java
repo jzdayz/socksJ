@@ -15,6 +15,8 @@
  */
 package io.github.jzdayz.utils;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -28,6 +30,35 @@ public final class Utils {
         if (ch.isActive()) {
             ch.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
         }
+    }
+
+    public static byte[] toBytes(int i) {
+        return new byte[]{
+                (byte) (i >>> 24 & 0xff),
+                (byte) (i >>> 16 & 0xff),
+                (byte) (i >>> 8 & 0xff),
+                (byte) (i & 0xff),
+        };
+    }
+
+    public static int toInt(byte[] b) {
+        return b[3] & 0xFF |
+                (b[2] & 0xFF) << 8 |
+                (b[1] & 0xFF) << 16 |
+                (b[0] & 0xFF) << 24;
+
+    }
+
+    public static ByteBuf encryptBuf(ByteBuf ms) throws Exception{
+        int length = ms.readableBytes();
+        byte[] bytes = Utils.toBytes(length);
+        byte[] data = ByteBufUtil.getBytes(ms);
+        System.out.println("加密的数据量："+data.length);
+        byte[] array = data; //AESUtil.encrypt(data, AESArg.PWD);
+        byte[] container = new byte[bytes.length + array.length];
+        System.arraycopy(bytes,0,container,0,bytes.length);
+        System.arraycopy(array,0,container,bytes.length,array.length);
+        return ms.alloc().buffer().writeBytes(container);
     }
 
     private Utils() { }

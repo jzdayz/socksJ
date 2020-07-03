@@ -16,6 +16,7 @@
 package io.github.jzdayz.socks;
 
 import io.github.jzdayz.netty.DirectClientHandler;
+import io.github.jzdayz.netty.RelayHandler;
 import io.github.jzdayz.utils.Utils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

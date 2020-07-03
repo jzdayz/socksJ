@@ -22,9 +22,12 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
+/**
+ *  客户端直接加密转发
+ */
 public final class Client {
 
-    static final int PORT = Integer.parseInt(System.getProperty("port", "1080"));
+    static final int PORT = Integer.parseInt(System.getProperty("port", "2081"));
 
     public static void main(String[] args) throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -33,7 +36,6 @@ public final class Client {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
-             .handler(new LoggingHandler(LogLevel.INFO))
              .childHandler(new ClientInitializer());
             b.bind(PORT).sync().channel().closeFuture().sync();
         } finally {
