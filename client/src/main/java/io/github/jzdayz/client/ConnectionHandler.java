@@ -35,12 +35,15 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
             final Channel outboundChannel = future.getNow();
             if (future.isSuccess()) {
                 ctx.pipeline().remove(ConnectionHandler.this);
-                outboundChannel.pipeline().addLast(EncodeHandler.INSTANCE);
-                outboundChannel.pipeline().addLast(new DecodeHandler());
+//                outboundChannel.pipeline().addLast(EncodeHandler.INSTANCE);
+//                outboundChannel.pipeline().addLast(new DecodeHandler());
                 outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
 
                 ctx.pipeline().addLast(new RelayHandlerEncoder(outboundChannel));
-                outboundChannel.writeAndFlush(Utils.encryptBuf((ByteBuf) msg));
+                outboundChannel.writeAndFlush(
+//                        Utils.encryptBuf((ByteBuf) msg)
+                        msg
+                );
             } else {
                 Utils.closeOnFlush(ctx.channel());
             }

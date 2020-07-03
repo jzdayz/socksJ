@@ -25,8 +25,8 @@ public final class ServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         ch.pipeline().addLast(
-                EncodeHandler.INSTANCE,
-                new DecodeHandler(),
+//                EncodeHandler.INSTANCE,
+//                new DecodeHandler(),
                 new SocksPortUnificationServerHandler(),
                 ServerHandler.INSTANCE
 
