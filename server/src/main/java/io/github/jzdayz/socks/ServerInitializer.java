@@ -15,18 +15,19 @@
  */
 package io.github.jzdayz.socks;
 
-import io.github.jzdayz.netty.DecodeHandler;
-import io.github.jzdayz.netty.EncodeHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.socksx.SocksPortUnificationServerHandler;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 public final class ServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         ch.pipeline().addLast(
-//                EncodeHandler.INSTANCE,
-//                new DecodeHandler(),
+                new LoggingHandler(LogLevel.INFO),
                 new SocksPortUnificationServerHandler(),
                 ServerHandler.INSTANCE
 

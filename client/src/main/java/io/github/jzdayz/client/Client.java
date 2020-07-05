@@ -27,7 +27,7 @@ import io.netty.handler.logging.LoggingHandler;
  */
 public final class Client {
 
-    static final int PORT = Integer.parseInt(System.getProperty("port", "2081"));
+    static final int PORT = Integer.parseInt(System.getProperty("localPort", "2081"));
 
     public static void main(String[] args) throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);

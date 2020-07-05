@@ -5,11 +5,15 @@ import io.github.jzdayz.utils.Utils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.FutureListener;
 import io.netty.util.concurrent.Promise;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+
+import java.util.Objects;
 
 /**
  *  本机Server
@@ -22,6 +26,8 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
 
     private Bootstrap b = new Bootstrap();
 
+    private Channel channel = null;
+
     private final static String HOST = System.getProperty("host","127.0.0.1");
 
     private final static Integer PORT = Integer.valueOf(System.getProperty("port","2080"));
@@ -29,38 +35,28 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         final Channel inboundChannel = ctx.channel();
-        Promise<Channel> promise = ctx.executor().newPromise();
-        promise.addListener((FutureListener<Channel>)(future)->{
-            // 连接proxy
-            final Channel outboundChannel = future.getNow();
-            if (future.isSuccess()) {
-                ctx.pipeline().remove(ConnectionHandler.this);
-//                outboundChannel.pipeline().addLast(EncodeHandler.INSTANCE);
-//                outboundChannel.pipeline().addLast(new DecodeHandler());
-                outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
-
-                ctx.pipeline().addLast(new RelayHandlerEncoder(outboundChannel));
-                outboundChannel.writeAndFlush(
-//                        Utils.encryptBuf((ByteBuf) msg)
-                        msg
-                );
-            } else {
-                Utils.closeOnFlush(ctx.channel());
-            }
-        });
-        // 连接远程机器
-        b.group(inboundChannel.eventLoop())
-                .channel(NioSocketChannel.class)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .handler(new DirectClientHandler(promise));
-        b.connect(HOST, PORT).addListener((ChannelFutureListener) future -> {
-            if (!future.isSuccess()) {
-                Utils.closeOnFlush(ctx.channel());
+        if (channel == null) {
+            b.group(new NioEventLoopGroup(1))
+                    .channel(NioSocketChannel.class)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    .handler(new ChannelInboundHandlerAdapter(){
+                        @Override
+                        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                            inboundChannel.writeAndFlush(msg);
+                        }
+                    });
+            ChannelFuture sync = b.connect(HOST, PORT).sync();
+            if (sync.isSuccess()){
+                channel = sync.channel();
+                channel.writeAndFlush(msg);
+                log.info(" connected {}:{} ", HOST, PORT);
             }else{
-                log.info(" connected {}:{} ",HOST,PORT);
+                Utils.closeOnFlush(ctx.channel());
             }
-        });
+        }else{
+            channel.writeAndFlush(msg);
+        }
 
     }
 
@@ -68,5 +64,11 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
         Utils.closeOnFlush(ctx.channel());
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        Utils.closeOnFlush(channel);
+        super.channelInactive(ctx);
     }
 }
