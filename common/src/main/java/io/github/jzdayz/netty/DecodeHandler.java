@@ -9,6 +9,8 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
+import java.util.Arrays;
+
 import static io.github.jzdayz.utils.AESArg.PWD;
 
 public class DecodeHandler extends LengthFieldBasedFrameDecoder {
@@ -27,8 +29,8 @@ public class DecodeHandler extends LengthFieldBasedFrameDecoder {
       if (null == frame) {
         return null;
       }
+      log.info("解码数据："+ Arrays.toString(ByteBufUtil.getBytes(frame)));
       int length = frame.readInt();
-      log.info("解码数据："+length);
       ByteBuf data = frame.readBytes(length);
       return ctx.alloc().buffer().writeBytes(AESUtil.decrypt(ByteBufUtil.getBytes(data), PWD));
     } catch (Exception e) {

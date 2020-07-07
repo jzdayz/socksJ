@@ -4,6 +4,7 @@ import io.github.jzdayz.netty.*;
 import io.github.jzdayz.utils.Utils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -13,6 +14,7 @@ import io.netty.util.concurrent.Promise;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -35,6 +37,8 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         final Channel inboundChannel = ctx.channel();
+        msg = encode(msg);
+        log.info("编码数据："+ Arrays.toString(ByteBufUtil.getBytes((ByteBuf) msg)));
         if (channel == null) {
             b.group(new NioEventLoopGroup(1))
                     .channel(NioSocketChannel.class)
@@ -58,6 +62,10 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
             channel.writeAndFlush(msg);
         }
 
+    }
+
+    private Object encode(Object msg) throws Exception{
+        return Utils.encryptBuf((ByteBuf) msg);
     }
 
     @Override

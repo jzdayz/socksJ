@@ -56,6 +56,7 @@ public final class Utils {
         byte[] container = new byte[bytes.length + array.length];
         System.arraycopy(bytes,0,container,0,bytes.length);
         System.arraycopy(array,0,container,bytes.length,array.length);
+        System.out.println("编码数据："+container.length);
         return ms.alloc().buffer().writeBytes(container);
     }
 

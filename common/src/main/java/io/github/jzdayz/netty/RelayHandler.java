@@ -16,13 +16,14 @@
 package io.github.jzdayz.netty;
 
 import io.github.jzdayz.utils.Utils;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 
-public final class RelayHandler extends ChannelInboundHandlerAdapter {
+public class RelayHandler extends ChannelInboundHandlerAdapter {
 
     private final Channel relayChannel;
 
@@ -32,11 +33,11 @@ public final class RelayHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER);
+//        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER);
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (relayChannel.isActive()) {
             relayChannel.writeAndFlush(msg);
         } else {
