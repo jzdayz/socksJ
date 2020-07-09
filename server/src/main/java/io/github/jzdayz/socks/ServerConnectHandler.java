@@ -47,7 +47,7 @@ public final class ServerConnectHandler extends SimpleChannelInboundHandler<Sock
                     .handler(new RelayHandler(ctx.channel()){
                         @Override
                         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception{
-                            msg = encode(msg);
+//                            msg = encode(msg);
                             super.channelRead(ctx, msg);
                         }
                     });

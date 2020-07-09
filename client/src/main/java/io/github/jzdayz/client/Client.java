@@ -16,11 +16,12 @@
 package io.github.jzdayz.client;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 /**
  *  客户端直接加密转发
@@ -37,7 +38,15 @@ public final class Client {
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
              .childHandler(new ClientInitializer());
-            b.bind(PORT).sync().channel().closeFuture().sync();
+            b.bind(PORT).sync().addListener(
+                    f->{
+                        if (!f.isSuccess()){
+                            System.out.println("启动失败");
+                        }else{
+                            System.out.println("启动成功");
+                        }
+                    }
+            ).channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

@@ -1,3 +1,13 @@
 dependencies {
     api project(":common")
 }
+
+jar {
+    manifest {
+        attributes "Main-Class": "io.github.jzdayz.client.Client"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
