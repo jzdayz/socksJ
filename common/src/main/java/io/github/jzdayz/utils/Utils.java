@@ -23,6 +23,9 @@ import io.netty.channel.ChannelFutureListener;
 
 public final class Utils {
 
+    private Utils() {
+    }
+
     /**
      * Closes the specified channel after all queued write requests are flushed.
      */
@@ -49,16 +52,14 @@ public final class Utils {
 
     }
 
-    public static ByteBuf encryptBuf(ByteBuf ms) throws Exception{
+    public static ByteBuf encryptBuf(ByteBuf ms) throws Exception {
         byte[] data = ByteBufUtil.getBytes(ms);
         byte[] array = AESUtil.encrypt(data, AESArg.PWD);
         byte[] bytes = Utils.toBytes(array.length);
         byte[] container = new byte[bytes.length + array.length];
-        System.arraycopy(bytes,0,container,0,bytes.length);
-        System.arraycopy(array,0,container,bytes.length,array.length);
-        System.out.println("编码数据："+container.length);
+        System.arraycopy(bytes, 0, container, 0, bytes.length);
+        System.arraycopy(array, 0, container, bytes.length, array.length);
+        System.out.println("编码数据：" + container.length);
         return ms.alloc().buffer().writeBytes(container);
     }
-
-    private Utils() { }
 }

@@ -26,13 +26,13 @@ public class TestServer {
                                     new LoggingHandler(LogLevel.DEBUG),
                                     EncodeHandler.INSTANCE,
                                     new DecodeHandler(),
-                                    new ChannelInboundHandlerAdapter(){
+                                    new ChannelInboundHandlerAdapter() {
                                         @Override
                                         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                                             System.out.println("读取事件");
-                                            if (msg instanceof ByteBuf){
+                                            if (msg instanceof ByteBuf) {
                                                 byte[] bytes = ByteBufUtil.getBytes((ByteBuf) msg);
-                                                System.out.println("get : "+new String(bytes));
+                                                System.out.println("get : " + new String(bytes));
                                             }
                                         }
                                     }

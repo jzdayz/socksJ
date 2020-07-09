@@ -1,10 +1,7 @@
 package io.github.jzdayz.netty;
 
-import io.github.jzdayz.utils.AESArg;
-import io.github.jzdayz.utils.AESUtil;
 import io.github.jzdayz.utils.Utils;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
@@ -15,10 +12,8 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 @ChannelHandler.Sharable
 public class EncodeHandler extends ChannelOutboundHandlerAdapter {
 
-    private static final InternalLogger log = InternalLoggerFactory.getInstance(EncodeHandler.class);
-
     public static final EncodeHandler INSTANCE = new EncodeHandler();
-
+    private static final InternalLogger log = InternalLoggerFactory.getInstance(EncodeHandler.class);
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {

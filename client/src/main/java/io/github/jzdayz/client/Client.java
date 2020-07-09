@@ -16,19 +16,20 @@
 package io.github.jzdayz.client;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.internal.logging.InternalLogger;
+import io.netty.util.internal.logging.InternalLoggerFactory;
 
 /**
- *  客户端直接加密转发
+ * 客户端直接加密转发
  */
 public final class Client {
 
     static final int PORT = Integer.parseInt(System.getProperty("localPort", "2081"));
+
+    private static final InternalLogger log = InternalLoggerFactory.getInstance(ConnectionHandler.class);
 
     public static void main(String[] args) throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -36,14 +37,14 @@ public final class Client {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-             .channel(NioServerSocketChannel.class)
-             .childHandler(new ClientInitializer());
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ClientInitializer());
             b.bind(PORT).sync().addListener(
-                    f->{
-                        if (!f.isSuccess()){
-                            System.out.println("启动失败");
-                        }else{
-                            System.out.println("启动成功");
+                    f -> {
+                        if (!f.isSuccess()) {
+                            log.error("启动失败");
+                        } else {
+                            log.info("启动成功 监听端口: {} , 目标地址:{} , 目标port:{}", PORT, ConnectionHandler.HOST, ConnectionHandler.PORT);
                         }
                     }
             ).channel().closeFuture().sync();

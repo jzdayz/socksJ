@@ -37,7 +37,7 @@ public final class RelayHandlerEncoder extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception{
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (relayChannel.isActive()) {
             relayChannel.writeAndFlush(Utils.encryptBuf((ByteBuf) msg));
         } else {

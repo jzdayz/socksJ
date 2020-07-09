@@ -3,12 +3,10 @@ package io.github.jzdayz;
 import io.github.jzdayz.netty.DecodeHandler;
 import io.github.jzdayz.netty.EncodeHandler;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.Scanner;
@@ -30,8 +28,8 @@ public class TestClient {
                         );
                     }
                 })
-                .connect("127.0.0.1", 9999).sync().addListener(ff->{
-                    if (!ff.isSuccess()){
+                .connect("127.0.0.1", 9999).sync().addListener(ff -> {
+                    if (!ff.isSuccess()) {
                         System.out.println("连接失败");
                         return;
                     }
@@ -41,13 +39,13 @@ public class TestClient {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("client up");
-        new Thread(()->{
+        new Thread(() -> {
             while (true) {
                 String next = scanner.next();
                 ByteBuf msg = sync.channel().alloc().buffer().writeBytes(next.getBytes());
-                System.out.println("发送数据："+new String(ByteBufUtil.getBytes(msg)));
-                sync.channel().writeAndFlush(msg).addListener((f)->{
-                    if (f.isSuccess()){
+                System.out.println("发送数据：" + new String(ByteBufUtil.getBytes(msg)));
+                sync.channel().writeAndFlush(msg).addListener((f) -> {
+                    if (f.isSuccess()) {
                         System.out.println("发送成功");
                         return;
                     }
@@ -55,9 +53,6 @@ public class TestClient {
                 });
             }
         }).start();
-
-
-
 
 
     }

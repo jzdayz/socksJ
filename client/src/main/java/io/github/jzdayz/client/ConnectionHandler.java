@@ -15,9 +15,9 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
  */
 public class ConnectionHandler extends ChannelInboundHandlerAdapter {
 
+    public final static String HOST = System.getProperty("targetHost", "127.0.0.1");
+    public final static Integer PORT = Integer.valueOf(System.getProperty("targetPort", "2080"));
     private static final InternalLogger log = InternalLoggerFactory.getInstance(ConnectionHandler.class);
-    private final static String HOST = System.getProperty("targetHost", "127.0.0.1");
-    private final static Integer PORT = Integer.valueOf(System.getProperty("targetPort", "2080"));
     private Bootstrap b = new Bootstrap();
     private Channel channel = null;
     private NioEventLoopGroup group = new NioEventLoopGroup(1);

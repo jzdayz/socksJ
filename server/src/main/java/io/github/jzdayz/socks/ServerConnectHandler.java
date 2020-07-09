@@ -15,7 +15,6 @@
  */
 package io.github.jzdayz.socks;
 
-import io.github.jzdayz.netty.DecodeHandler;
 import io.github.jzdayz.netty.RelayHandler;
 import io.github.jzdayz.utils.Utils;
 import io.netty.bootstrap.Bootstrap;
@@ -44,9 +43,9 @@ public final class ServerConnectHandler extends SimpleChannelInboundHandler<Sock
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                     .option(ChannelOption.SO_KEEPALIVE, true)
-                    .handler(new RelayHandler(ctx.channel()){
+                    .handler(new RelayHandler(ctx.channel()) {
                         @Override
-                        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception{
+                        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 //                            msg = encode(msg);
                             super.channelRead(ctx, msg);
                         }
@@ -58,9 +57,9 @@ public final class ServerConnectHandler extends SimpleChannelInboundHandler<Sock
                         request.dstAddrType(),
                         request.dstAddr(),
                         request.dstPort())).addListener((ChannelFutureListener) future -> {
-                            ctx.pipeline().remove(this);
-                            ctx.pipeline().addLast(new RelayHandler(sync.channel()));
-                        });
+                    ctx.pipeline().remove(this);
+                    ctx.pipeline().addLast(new RelayHandler(sync.channel()));
+                });
             } else {
                 ctx.channel().writeAndFlush(
                         new DefaultSocks5CommandResponse(Socks5CommandStatus.FAILURE, request.dstAddrType()));
@@ -71,7 +70,7 @@ public final class ServerConnectHandler extends SimpleChannelInboundHandler<Sock
         }
     }
 
-    private Object encode(Object msg) throws Exception{
+    private Object encode(Object msg) throws Exception {
         return Utils.encryptBuf((ByteBuf) msg);
     }
 

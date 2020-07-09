@@ -15,7 +15,6 @@
  */
 package io.github.jzdayz.socks;
 
-import io.github.jzdayz.netty.DecodeHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.socksx.SocksPortUnificationServerHandler;
@@ -30,7 +29,7 @@ public final class ServerInitializer extends ChannelInitializer<SocketChannel> {
         SSLEngine engine = SSLContext.getDefault().createSSLEngine();
         engine.setUseClientMode(false);
         ch.pipeline().addLast(
-                new SslHandler(engine,true),
+                new SslHandler(engine, true),
                 new SocksPortUnificationServerHandler(),
                 ServerHandler.INSTANCE
         );
