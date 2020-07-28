@@ -26,7 +26,6 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         final Channel inboundChannel = ctx.channel();
         if (channel == null) {
-
             b.group(group)
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
@@ -34,10 +33,7 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
                     .handler(new ChannelInitializer<Channel>() {
                         @Override
                         protected void initChannel(Channel ch) throws Exception {
-//                            SSLEngine engine = SSLContext.getDefault().createSSLEngine();
-//                            engine.setUseClientMode(true);
                             ch.pipeline().addFirst(
-//                                    new SslHandler(engine, true),
                                     new ChannelInboundHandlerAdapter() {
                                         @Override
                                         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -63,10 +59,10 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        log.error(cause);
         Utils.closeOnFlush(ctx.channel());
         Utils.closeOnFlush(channel);
-        group.shutdownGracefully();
+        super.exceptionCaught(ctx, cause);
     }
 
     @Override
